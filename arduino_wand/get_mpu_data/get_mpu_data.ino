@@ -4,7 +4,7 @@
 MPU6050 mpu;
 
 // 定义每秒采样次数
-const int freq = 64;
+const int freq = 100;
 const int second = 2;
 
 // 重力分量
@@ -45,7 +45,7 @@ void button_pressed() {
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin();
+  Wire.begin(1, 0);
   mpu.initialize();
 
   if (!mpu.testConnection()) {
@@ -59,16 +59,33 @@ void setup() {
 
 void loop() {
 
-  if (buttonPressed == true) {
-    resetState();
+  int data_len = Serial.available();
 
-    for (int i = 0; i < freq * second; i ++) {
-      kalman_update(i);
+  if (data_len > 0) {
+    char data = Serial.read();
+    // Serial.println(data);
+
+    if (data == '1') {
+      resetState();
+
+      for (int i = 0; i < freq * second; i ++) {
+        kalman_update(i);
+      }
+
+      Serial.println("");
     }
-
-    Serial.println("");
-    buttonPressed = false;
   }
+
+  // if (buttonPressed == true) {
+  //   resetState();
+
+  //   for (int i = 0; i < freq * second; i ++) {
+  //     kalman_update(i);
+  //   }
+
+  //   Serial.println("");
+  //   buttonPressed = false;
+  // }
 
 }
 
@@ -144,12 +161,13 @@ void kalman_update(int i) {
   Oz = -sin(k_pitch) * Ax + cos(k_pitch) * sin(k_roll) * Ay + cos(k_pitch) * cos(k_roll) * Az;
 
   // 打印数据
-  Serial.print(Ox);
-  Serial.print(",");
-  Serial.print(Oz);
-  if (i != freq * second - 1) {
-    Serial.print(",");
-  }
+  Serial.printf("%f,%f,%f,%f,%f,%f,", Ox, Oy, Oz, Ax, Ay, Az);
+  // Serial.print(Ox);
+  // Serial.print(",");
+  // Serial.print(Oz);
+  // if (i != freq * second - 1) {
+  //   Serial.print(",");
+  // }
 
   delay(1000 / freq);
 }

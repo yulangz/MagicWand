@@ -1,13 +1,14 @@
 import serial
 import pandas as pd
+import time
 
 # 配置串口参数
-port = 'COM3'  # 替换为你的ESP32连接的串口号
+port = 'COM5'  # 替换为你的ESP32连接的串口号
 baud_rate = 115200  # 替换为你的ESP32的波特率
 
 data_x = 'data_x.csv'
 data_y = 'data_y.csv'
-label = [1]
+label = [3]
 
 try:
     # 打开串口
@@ -17,9 +18,15 @@ try:
     # 打开或创建CSV文件
     with open(data_x, mode='a', newline='') as file1, open(data_y, mode='a', newline='') as file2:
         while True:
+            input('输入任意键开始一次采集')
+            ser.write("1".encode());  # 发送数据请求指令
+            time.sleep(0.1) # 等待数据
+
             # 读取串口数据
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').strip()
+                if line.endswith(','):
+                    line = line[:-1]
                 print(f"读取到数据: {line}")  # 打印读取到的数据
 
                 try:
