@@ -9,7 +9,7 @@
 #define RGB_BUILTIN 10
 
 byte trg = 0, cont = 0;
-byte buf[32], len;
+byte buf[8], len;
 
 HardwareSerial SerialPort(0); // use UART2
 
@@ -25,48 +25,36 @@ byte getSum(byte *data, byte len) {
 
 //红外内码学习
 byte IrStudy(byte *data, byte group) {
-  byte *offset = data, cs;
-  //帧头
-  *offset++ = 0x68;
-  //帧长度
-  *offset++ = 0x08;
-  *offset++ = 0x00;
-  //模块地址
-  *offset++ = 0xff;
-  //功能码
-  *offset++ = 0x10;
+  byte *offset = data;
+  //指令
+  *offset++ = 0xE0;
   //内码索引号，代表第几组
   *offset++ = group;
-  cs = getSum(&data[3], offset - data - 3);
-  *offset++ = cs;
-  *offset++ = 0x16;
   return offset - data; 
 }
 
 //红外内码发送
 byte IrSend(byte *data, byte group) {
-  byte *offset = data, cs;
+  byte *offset = data;
   //帧头
-  *offset++ = 0x68;
-  //帧长度
-  *offset++ = 0x08;
-  *offset++ = 0x00;
-  //模块地址
-  *offset++ = 0xff;
-  //功能码
-  *offset++ = 0x12;
+  *offset++ = 0xE3;
   //内码索引号，代表第几组
   *offset++ = group;
-  cs = getSum(&data[3], offset - data - 3);
-  *offset++ = cs;
-  *offset++ = 0x16;
+  return offset - data; 
+}
+
+//红外内码发送
+byte IrCancel(byte *data) {
+  byte *offset = data;
+  //帧头
+  *offset++ = 0xE2;
   return offset - data; 
 }
 
 void setup() {
   neopixelWrite(RGB_BUILTIN,0,0,RGB_BRIGHTNESS); // BLUE
   Serial.begin(115200);
-  Serial1.begin(115200, SERIAL_8N1, 20, 21);
+  Serial1.begin(9600, SERIAL_8N1, 20, 21);
 }
 
 void loop() {
@@ -77,11 +65,15 @@ void loop() {
     Serial.println(data);
 
     if (data == '1') {
-      len = IrStudy(buf, 0);
+      len = IrStudy(buf, 1);
       Serial1.write(buf, len);
       Serial.println("1");
     } else if (data == '2') {
-      len = IrSend(buf, 0);
+      len = IrSend(buf, 1);
+      Serial1.write(buf, len);
+      Serial.println("2");
+    } else if (data == '3') {
+      len = IrCancel(buf);
       Serial1.write(buf, len);
       Serial.println("2");
     }

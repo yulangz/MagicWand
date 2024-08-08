@@ -8,7 +8,7 @@ baud_rate = 115200  # 替换为你的ESP32的波特率
 
 data_x = 'data_x.csv'
 data_y = 'data_y.csv'
-label = [3]
+label = [8]
 
 try:
     # 打开串口

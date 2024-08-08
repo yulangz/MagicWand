@@ -2,6 +2,8 @@
 #include "MPU6050.h"
 
 MPU6050 mpu;
+#define MPU_ADDR0 0
+#define MPU_ADDR1 1
 
 // 定义每秒采样次数
 const int freq = 100;
@@ -45,7 +47,7 @@ void button_pressed() {
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin(1, 0);
+  Wire.begin(MPU_ADDR0, MPU_ADDR1);
   mpu.initialize();
 
   if (!mpu.testConnection()) {
@@ -161,13 +163,7 @@ void kalman_update(int i) {
   Oz = -sin(k_pitch) * Ax + cos(k_pitch) * sin(k_roll) * Ay + cos(k_pitch) * cos(k_roll) * Az;
 
   // 打印数据
-  Serial.printf("%f,%f,%f,%f,%f,%f,", Ox, Oy, Oz, Ax, Ay, Az);
-  // Serial.print(Ox);
-  // Serial.print(",");
-  // Serial.print(Oz);
-  // if (i != freq * second - 1) {
-  //   Serial.print(",");
-  // }
+  Serial.printf("%f,%f,%f,", Ox, Oy, Oz);
 
   delay(1000 / freq);
 }
