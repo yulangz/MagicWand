@@ -6,19 +6,19 @@ import math
 # 设置数据集的形状
 timesteps = 200 # 2 秒，每秒 100 个数据点
 lr = 4e-4
-num_epochs = 50
+num_epochs = 16
 batch_size = 8
 input_dim = 3
-num_classes = 9
+num_classes = 5
 
 # @tf.keras.utils.register_keras_serializable()
 class Model(tf.keras.Model):
     def __init__(self):
         super(Model, self).__init__()
-        self.conv1 = tf.keras.layers.Conv2D(filters=8, kernel_size=(1,3), strides=(1,1), padding='same')
+        self.conv1 = tf.keras.layers.Conv2D(filters=16, kernel_size=(1,3), strides=(1,1), padding='same')
         # self.norm1 = tf.keras.layers.BatchNormalization()
         self.relu1 = tf.keras.layers.Activation('relu')
-        self.conv2 = tf.keras.layers.Conv2D(filters=16, kernel_size=(1,3), strides=(1,1), padding='same')
+        self.conv2 = tf.keras.layers.Conv2D(filters=32, kernel_size=(1,3), strides=(1,1), padding='same')
         # self.norm2 = tf.keras.layers.BatchNormalization()
         self.relu2 = tf.keras.layers.Activation('relu')
         # self.conv3 = tf.keras.layers.Conv2D(filters=32, kernel_size=(1,3), strides=(1,1), padding='same')

@@ -4,7 +4,12 @@ from sklearn.model_selection import train_test_split
 data_x = pd.read_csv('data_x.csv', header=None)
 data_y = pd.read_csv('data_y.csv', header=None)
 data_x = pd.DataFrame(data_x.values.tolist())
-print(data_x.shape)
+data = pd.concat([data_x, data_y], axis=1)
+data = data[data.iloc[:, -1].isin([0,1,2,3,5])]
+data.iloc[:, -1] = data.iloc[:, -1].replace(5, 4)
+print(data.shape)
+data_x = data.iloc[:,:-1]
+data_y = data.iloc[:,-1]
 # 切分数据
 X_train, X_test, y_train, y_test = train_test_split(data_x, data_y, test_size=0.2, random_state=42)
 # 写入到文件
