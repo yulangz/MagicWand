@@ -155,7 +155,7 @@ const tflite::Model* model = nullptr;
 tflite::MicroInterpreter* interpreter = nullptr;
 TfLiteTensor* model_input = nullptr;
 
-const int num_classes = 9;
+const int num_classes = 5;
 const int input_dim = 3;
 
 constexpr int kTensorArenaSize = 80 * 1024;
